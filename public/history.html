@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturio — Istoric Facturi</title>
+    <meta name="description" content="Vizualizează și gestionează facturile generate anterior.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/history.css">
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="grid-pattern"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="/" class="nav-brand" style="text-decoration: none; cursor: pointer;">
+            <div class="nav-logo">📄</div>
+            <span class="nav-title">Facturio</span>
+        </a>
+        <div class="nav-links">
+            <a href="/" class="nav-link">＋ Factură nouă</a>
+            <a href="/history.html" class="nav-link active">📁 Istoric</a>
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <span class="user-name" id="displayUser">—</span>
+            </div>
+            <button class="btn-logout" id="btnLogout">Deconectare</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="page-header">
+            <h2>Istoric Facturi</h2>
+            <p>Toate facturile generate, într-un singur loc</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="stat-value" id="statTotal">0</span>
+                <span class="stat-label">Facturi totale</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="statMonth">0</span>
+                <span class="stat-label">Luna aceasta</span>
+            </div>
+            <div class="stat-card accent">
+                <span class="stat-value" id="statSum">0 RON</span>
+                <span class="stat-label">Valoare totală</span>
+            </div>
+        </div>
+
+        <!-- Tabel facturi -->
+        <div class="card" style="animation-delay: 0.15s">
+            <div class="card-header">
+                <div class="card-icon" style="background: rgba(99,102,241,0.15)">📋</div>
+                <div class="card-header-text">
+                    <h3>Facturi emise</h3>
+                    <p id="invoiceCount">Se încarcă...</p>
+                </div>
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display:none">
+                <div class="empty-icon">📭</div>
+                <h3>Nicio factură încă</h3>
+                <p>Creează prima ta factură pentru a o vedea aici</p>
+                <a href="/" class="btn-create">＋ Creează factură</a>
+            </div>
+
+            <div class="table-wrapper" id="tableWrapper">
+                <table class="history-table" id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>Serie/Nr.</th>
+                            <th>Client</th>
+                            <th>Data</th>
+                            <th>Total</th>
+                            <th>Acțiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceRows">
+                        <!-- Rânduri generate din JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/history.js"></script>
+</body>
+</html>

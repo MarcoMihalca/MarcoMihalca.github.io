@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturio — Dashboard</title>
+    <meta name="description" content="Facturio - Generează facturi profesionale rapid și ușor.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/history.css">
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="grid-pattern"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="/" class="nav-brand" style="text-decoration: none; cursor: pointer;">
+            <div class="nav-logo">📄</div>
+            <span class="nav-title">Facturio</span>
+        </a>
+        <div class="nav-links">
+            <a href="/" class="nav-link active">＋ Factură nouă</a>
+            <a href="/history.html" class="nav-link">📁 Istoric</a>
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <span class="user-name" id="displayUser">—</span>
+            </div>
+            <button class="btn-logout" id="btnLogout">Deconectare</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Main Content -->
+        <main class="main">
+            <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2>Generează Factură</h2>
+                    <p>Completează toate secțiunile și descarcă factura în format PDF</p>
+                </div>
+                <div class="tva-toggle-wrapper desktop-only tooltip-container" style="margin-bottom: 0; padding: 10px 16px; background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.2); position: relative; cursor: pointer; z-index: 101;">
+                    <div class="tva-toggle-label" style="margin-right: 15px;">
+                        <span style="font-size: 13px;">Previzualizare Live</span>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="desktopPreviewToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div class="custom-tooltip" onmouseover="this.style.opacity='0'; setTimeout(()=>this.style.display='none', 300)">Nu îți place să previzualizezi? Dezactivează-o chiar aici!</div>
+                </div>
+            </div>
+
+            <form id="invoiceForm">
+
+                <!-- DETALII FACTURĂ -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon detalii">📋</div>
+                        <div class="card-header-text">
+                            <h3>Detalii Factură</h3>
+                            <p>Serie, număr și date</p>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="serieFact">Serie factură</label>
+                            <input type="text" id="serieFact" placeholder="ex: FCT" value="FCT" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="numarFact">Număr factură</label>
+                            <input type="text" id="numarFact" placeholder="ex: 001" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dataEmitere">Data emiterii</label>
+                            <input type="date" id="dataEmitere" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataScadenta">Data scadenței</label>
+                            <input type="date" id="dataScadenta" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FURNIZOR -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon furnizor">🏢</div>
+                        <div class="card-header-text">
+                            <h3>Date Furnizor</h3>
+                            <p>Informațiile companiei tale</p>
+                        </div>
+                    </div>
+
+                    <!-- Logo Upload -->
+                    <div class="logo-upload-area" id="logoUploadArea">
+                        <div class="logo-preview" id="logoPreview">
+                            <span class="logo-placeholder">🖼️</span>
+                            <span class="logo-text">Logo</span>
+                        </div>
+                        <div class="logo-actions">
+                            <p style="margin-bottom: 8px; font-size: 13px; color: #e2e8f0; font-weight: 500;">Logo-ul companiei tale?</p>
+                            <div style="display: flex; gap: 8px;">
+                                <label class="btn-upload" for="logoInput">
+                                    📤 Încarcă logo aici!
+                                    <input type="file" id="logoInput" accept=".png,.jpg,.jpeg,.svg" hidden>
+                                </label>
+                                <button type="button" class="btn-remove-logo" id="btnRemoveLogo" style="display:none">✕ Șterge</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="furnNume">Denumire firmă</label>
+                            <input type="text" id="furnNume" placeholder="ex: SC Exemplu SRL" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="furnCUI">CUI</label>
+                            <input type="text" id="furnCUI" placeholder="ex: RO12345678" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="furnRegCom">Nr. Reg. Comerț</label>
+                            <input type="text" id="furnRegCom" placeholder="ex: J40/1234/2020">
+                        </div>
+                        <div class="form-group">
+                            <label for="furnAdresa">Adresă</label>
+                            <input type="text" id="furnAdresa" placeholder="ex: Str. Principală, Nr. 1, București">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="furnIBAN">IBAN</label>
+                            <input type="text" id="furnIBAN" placeholder="ex: RO49AAAA1B31007593840000">
+                        </div>
+                        <div class="form-group">
+                            <label for="furnBanca">Banca</label>
+                            <input type="text" id="furnBanca" placeholder="ex: Banca Transilvania">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLIENT -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon client">👤</div>
+                        <div class="card-header-text">
+                            <h3>Date Client</h3>
+                            <p>Informațiile clientului</p>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="clientNume">Denumire client</label>
+                            <input type="text" id="clientNume" placeholder="ex: SC Client SRL" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="clientCUI">CUI</label>
+                            <input type="text" id="clientCUI" placeholder="ex: RO87654321">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="clientRegCom">Nr. Reg. Comerț</label>
+                            <input type="text" id="clientRegCom" placeholder="ex: J40/5678/2021">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientAdresa">Adresă</label>
+                            <input type="text" id="clientAdresa" placeholder="ex: Bd. Libertății, Nr. 5, Cluj">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="clientEmail">Email client (pentru trimitere factură)</label>
+                        <input type="email" id="clientEmail" placeholder="ex: client@email.com">
+                    </div>
+                </div>
+
+                <!-- PRODUSE / SERVICII -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon produse">🛒</div>
+                        <div class="card-header-text">
+                            <h3>Produse / Servicii</h3>
+                            <p>Adaugă produsele sau serviciile facturate</p>
+                        </div>
+                    </div>
+
+                    <div class="tva-toggle-wrapper" id="tvaToggleWrapper">
+                        <div class="tva-toggle-label">
+                            <span>Prețurile includ TVA</span>
+                            <span id="tvaToggleHint">TVA-ul va fi adăugat la prețul introdus</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="pretCuTVA">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table class="products-table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th style="min-width:200px">Denumire</th>
+                                    <th style="min-width:80px">UM</th>
+                                    <th style="min-width:80px">Cant.</th>
+                                    <th style="min-width:100px">Preț unit.</th>
+                                    <th style="min-width:80px">TVA %</th>
+                                    <th style="min-width:90px">Valoare</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="productRows">
+                                <!-- Rânduri generate din JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" class="btn-add-row" id="btnAddRow">
+                        <span>＋</span> Adaugă produs
+                    </button>
+                </div>
+
+                <!-- TOTALURI + ACȚIUNI -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon total">💰</div>
+                        <div class="card-header-text">
+                            <h3>Totaluri</h3>
+                            <p>Calculare automată</p>
+                        </div>
+                    </div>
+                    <div class="totals-grid">
+                        <div class="total-row">
+                            <span class="total-row-label">Subtotal (fără TVA)</span>
+                            <span class="total-row-value" id="subtotalDisplay">0.00 RON</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="total-row-label">TVA total</span>
+                            <span class="total-row-value" id="tvaDisplay">0.00 RON</span>
+                        </div>
+                        <div class="total-row grand">
+                            <span class="total-row-label">Total de plată</span>
+                            <span class="total-row-value" id="totalDisplay">0.00 RON</span>
+                        </div>
+                    </div>
+
+                    <!-- Butoane acțiuni -->
+                    <div class="actions-row">
+                        <button type="submit" class="btn-generate" id="btnGenerate">
+                            <span>📥 Descarcă PDF</span>
+                        </button>
+                        <button type="button" class="btn-xml" id="btnExportXml">
+                            <span>📄 Export XML e-Factura</span>
+                        </button>
+                        <button type="button" class="btn-email" id="btnSendEmail">
+                            <span>📧 Trimite pe email</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </main>
+
+        <!-- PREVIEW PANEL -->
+        <aside class="preview-panel" id="previewPanel">
+            <div class="preview-header">
+                <h3>👁️ Previzualizare</h3>
+                <button class="btn-toggle-preview" id="btnTogglePreview" title="Închide preview">✕</button>
+            </div>
+            <div class="preview-content" id="previewContent">
+                <div class="preview-page">
+                    <p class="preview-placeholder">Completează formularul pentru a vedea previzualizarea</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Floating preview button (mobil) -->
+    <button class="btn-float-preview" id="btnFloatPreview" title="Previzualizare">👁️</button>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/preview.js"></script>
+</body>
+</html>

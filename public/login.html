@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturio — Autentificare</title>
+    <meta name="description" content="Facturio - Sistem modern de facturare. Autentifică-te pentru a accesa platforma.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="grid-pattern"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="login-container">
+        
+        <!-- Intro Card -->
+        <div class="intro-card" id="introCard">
+            <div class="intro-logo">
+                <div class="logo-icon">📄</div>
+                <h1>Facturio</h1>
+                <p>Sistem modern de facturare</p>
+            </div>
+            <div class="intro-actions">
+                <button class="btn-intro" id="btnGoLogin">
+                    <span>Ai deja cont?</span>
+                    <strong style="display:block; font-size:16px;">Autentifică-te</strong>
+                </button>
+                <div class="intro-divider">sau</div>
+                <button class="btn-intro accent" id="btnGoRegister">
+                    <span>Ești nou aici?</span>
+                    <strong style="display:block; font-size:16px;">Înregistrează-te</strong>
+                </button>
+            </div>
+        </div>
+
+        <!-- Form Card (Hidden initially) -->
+        <div class="login-card" id="formCard" style="display: none;">
+            <button id="btnBackToIntro" class="btn-back">← Înapoi</button>
+            
+            <div class="logo">
+                <div class="logo-icon">📄</div>
+                <h1>Facturio</h1>
+                <p id="formSubtitle">Autentifică-te pentru a continua</p>
+            </div>
+
+            <form id="loginForm" autocomplete="on">
+                <div id="errorMsg" class="error-message">
+                    <span>⚠️</span>
+                    <span id="errorText">Utilizator sau parolă incorectă.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Utilizator</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="username" name="username"
+                            placeholder="Introdu numele de utilizator"
+                            autocomplete="username" required>
+                        <span class="input-icon">👤</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Parola</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password"
+                            placeholder="Introdu parola"
+                            autocomplete="current-password" required>
+                        <span class="input-icon">🔒</span>
+                        <button type="button" class="password-toggle" id="togglePassword" aria-label="Arată parola">👁️</button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Ține-mă minte</span>
+                    </label>
+                    <a href="#" class="forgot-link">Ai uitat parola?</a>
+                </div>
+
+                <button type="submit" class="btn-login" id="btnLogin">
+                    <span>Intră în cont →</span>
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <p>© 2026 Facturio. Toate drepturile rezervate.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/js/login.js"></script>
+</body>
+</html>
