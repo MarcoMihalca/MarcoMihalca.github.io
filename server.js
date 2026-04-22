@@ -16,7 +16,7 @@ const emailRoutes = require('./routes/email');
 const efacturaRoutes = require('./routes/efactura');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // --- Middleware global ---
 app.use(express.json({ limit: '10mb' }));
