@@ -9,46 +9,83 @@ const requireAuth = require('../middleware/auth');
 const fontRegular = path.join(__dirname, '..', 'fonts', 'arial.ttf');
 const fontBold = path.join(__dirname, '..', 'fonts', 'arialbd.ttf');
 
-// Director uploads (pentru logo)
+// Director uploads
 const uploadsDir = path.join(__dirname, '..', 'uploads');
-
-function getLogoPath(userId) {
-    const extensions = ['.png', '.jpg', '.jpeg'];
-    for (const ext of extensions) {
-        const filePath = path.join(uploadsDir, `logo_${userId}${ext}`);
-        if (fs.existsSync(filePath)) return filePath;
-    }
-    return null;
+const invoicesDir = path.join(uploadsDir, 'invoices');
+if (!fs.existsSync(invoicesDir)) {
+    fs.mkdirSync(invoicesDir, { recursive: true });
 }
 
-// Funcție comună pentru generare PDF (returnează Buffer)
-function generatePdfBuffer(invoiceData, userId) {
+function getLogoInfo(userId) {
+    const extensions = ['.png', '.jpg', '.jpeg', '.svg'];
+    // 1. Caută logo temporar
+    for (const ext of extensions) {
+        const filePath = path.join(uploadsDir, `logo_${userId}${ext}`);
+        if (fs.existsSync(filePath)) return { file: filePath, isTemp: true };
+    }
+    // 2. Caută logo standard
+    for (const ext of extensions) {
+        const filePath = path.join(uploadsDir, `standard_logo_${userId}${ext}`);
+        if (fs.existsSync(filePath)) return { file: filePath, isTemp: false };
+    }
+    return { file: null, isTemp: false };
+}
+
+// Generare PDF și salvare pe disc
+function generateAndSavePdfBuffer(invoiceData, userId, isFromHistory = false) {
     return new Promise((resolve, reject) => {
         const { serie, numar, dataEmitere, dataScadenta, furnizor, client, produse, pretCuTVA } = invoiceData;
-        const doc = new PDFDocument({ size: 'A4', margin: 50 });
+        const pdfFileName = `factura_${userId}_${serie}_${numar}.pdf`;
+        const pdfPath = path.join(invoicesDir, pdfFileName);
+        
+        // Dacă e din istoric și există deja salvat, returnează-l pe acela
+        if (isFromHistory && fs.existsSync(pdfPath)) {
+            return resolve(fs.readFileSync(pdfPath));
+        }
 
+        const doc = new PDFDocument({ size: 'A4', margin: 50 });
         doc.registerFont('Arial', fontRegular);
         doc.registerFont('Arial-Bold', fontBold);
 
         const chunks = [];
         doc.on('data', chunk => chunks.push(chunk));
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => {
+            const buffer = Buffer.concat(chunks);
+            
+            // Salvează fizic pe server
+            fs.writeFileSync(pdfPath, buffer);
+            
+            // Șterge logoul temporar DOAR dacă generăm o factură nouă (nu din istoric)
+            if (!isFromHistory) {
+                const logoInfo = getLogoInfo(userId);
+                if (logoInfo.isTemp && logoInfo.file) {
+                    try { fs.unlinkSync(logoInfo.file); } catch (e) {}
+                }
+            }
+            
+            resolve(buffer);
+        });
         doc.on('error', reject);
 
-        buildPdfContent(doc, invoiceData, userId);
+        buildPdfContent(doc, invoiceData, userId, isFromHistory);
         doc.end();
     });
 }
 
+// Funcție veche menținută pentru compatibilitate / intern
+function generatePdfBuffer(invoiceData, userId) {
+    return generateAndSavePdfBuffer(invoiceData, userId, false);
+}
+
 // Construiește conținutul PDF
-function buildPdfContent(doc, data, userId) {
+function buildPdfContent(doc, data, userId, isFromHistory = false) {
     const { serie, numar, dataEmitere, dataScadenta, furnizor, client, produse, pretCuTVA } = data;
 
     // --- LOGO + ANTET ---
-    const logoPath = userId ? getLogoPath(userId) : null;
-    if (logoPath) {
+    const logoInfo = (userId && !isFromHistory) ? getLogoInfo(userId) : { file: null };
+    if (logoInfo.file) {
         try {
-            doc.image(logoPath, 50, 45, { width: 70 });
+            doc.image(logoInfo.file, 50, 45, { width: 70 });
             doc.fontSize(22).font('Arial-Bold').text('FACTUR\u0102', 130, 50, { align: 'center' });
         } catch(e) {
             doc.fontSize(22).font('Arial-Bold').text('FACTUR\u0102', { align: 'center' });
@@ -192,11 +229,12 @@ function buildPdfContent(doc, data, userId) {
     }
 }
 
-// Rută descărcare PDF
+// Rută descărcare PDF (nou) sau regenerare
 router.post('/generate-pdf', requireAuth, async (req, res) => {
     try {
         const userId = req.session.user.id;
-        const buffer = await generatePdfBuffer(req.body, userId);
+        const isFromHistory = req.body.fromHistory === true;
+        const buffer = await generateAndSavePdfBuffer(req.body, userId, isFromHistory);
 
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=factura_${req.body.serie}${req.body.numar}.pdf`);

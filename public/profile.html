@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturio — Profil Utilizator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/history.css">
+    <link rel="stylesheet" href="/css/profile.css">
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="grid-pattern"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="/" class="nav-brand" style="text-decoration: none; cursor: pointer;">
+            <div class="nav-logo">📄</div>
+            <span class="nav-title">Facturio</span>
+        </a>
+        <div class="nav-links">
+            <a href="/" class="nav-link">＋ Factură nouă</a>
+            <a href="/history.html" class="nav-link">📁 Istoric</a>
+        </div>
+        <div class="nav-user">
+            <div class="theme-toggle-wrapper">
+                <button class="theme-toggle-btn" title="Schimbă tema"></button>
+                <div class="theme-tooltip">Vrei sa incerci aceeasi experienta pe care o iubesti, dar putin diferita? :)</div>
+            </div>
+            <a href="/profile.html" class="user-info active" style="text-decoration: none;">
+                <div class="user-avatar">👤</div>
+                <span class="user-name" id="displayUser">—</span>
+            </a>
+            <button class="btn-logout" id="btnLogout">Deconectare</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Main Content -->
+        <main class="main" style="max-width: 700px;">
+            <div class="page-header">
+                <h2>Profil Utilizator</h2>
+                <p>Gestionează setările contului tău și logoul companiei</p>
+            </div>
+
+            <!-- CARTE DE VIZITĂ -->
+            <div class="card profile-card">
+                <div class="profile-header-bg"></div>
+                <div class="profile-avatar-container">
+                    <div class="profile-avatar" id="profileAvatarPreview">
+                        <span class="profile-placeholder">👤</span>
+                    </div>
+                    <label class="btn-upload-avatar" for="avatarInput" title="Schimbă poza de profil">
+                        📷
+                        <input type="file" id="avatarInput" accept=".png,.jpg,.jpeg,.svg" hidden>
+                    </label>
+                </div>
+                
+                <div class="profile-details">
+                    <h3 id="profileUsername">Se încarcă...</h3>
+                    <p class="role-badge">Utilizator Facturio</p>
+                    
+                    <div id="btnRemoveAvatarContainer" style="margin-top: 15px; width: 100%; display: none; justify-content: center;">
+                        <button type="button" class="btn-remove-avatar" id="btnRemoveAvatar">✕ Șterge poza</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETĂRI COMPANIE -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon furnizor">🏢</div>
+                    <div class="card-header-text">
+                        <h3>Logo Standard Companie</h3>
+                        <p>Acest logo va fi aplicat automat pe toate facturile generate</p>
+                    </div>
+                </div>
+
+                <div class="logo-upload-area" id="standardLogoArea">
+                    <div class="logo-preview" id="standardLogoPreview">
+                        <span class="logo-placeholder">🖼️</span>
+                        <span class="logo-text">Fără logo</span>
+                    </div>
+                    <div class="logo-actions">
+                        <p style="margin-bottom: 8px; font-size: 13px; color: #e2e8f0; font-weight: 500;">Setează logoul tău standard</p>
+                        <div style="display: flex; gap: 8px;">
+                            <label class="btn-upload" for="standardLogoInput">
+                                📤 Încarcă logo
+                                <input type="file" id="standardLogoInput" accept=".png,.jpg,.jpeg,.svg" hidden>
+                            </label>
+                            <button type="button" class="btn-remove-logo" id="btnRemoveStandardLogo" style="display:none">✕ Șterge logo</button>
+                        </div>
+                        <p style="font-size: 11px; color: rgba(148, 163, 184, 0.6); margin-top: 8px;">
+                            Dacă setezi un logo aici, nu va mai trebui să-l încarci la fiecare factură. Totuși, poți oricând folosi alt logo (temporar) direct din pagina de generare!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/profile.js"></script>
+</body>
+</html>

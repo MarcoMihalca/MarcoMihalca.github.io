@@ -1,7 +1,23 @@
 // ============ AUTENTIFICARE ============
+// ============ AUTENTIFICARE ============
+const cachedUser = sessionStorage.getItem('facturio_user');
+if (cachedUser) document.getElementById('displayUser').textContent = cachedUser;
+
 fetch('/api/me')
     .then(r => { if (!r.ok) window.location.href = '/login.html'; return r.json(); })
-    .then(data => { if (data.username) document.getElementById('displayUser').textContent = data.username; })
+    .then(data => { 
+        if (data.username) {
+            sessionStorage.setItem('facturio_user', data.username);
+            document.getElementById('displayUser').textContent = data.username; 
+        }
+        fetch('/api/avatar').then(res => {
+            if (res.ok) {
+                const avatarEl = document.querySelector('.user-avatar');
+                const v = localStorage.getItem('avatar_v') || '1';
+                if (avatarEl) avatarEl.innerHTML = `<img src="/api/avatar?v=${v}" alt="Avatar">`;
+            }
+        });
+    })
     .catch(() => window.location.href = '/login.html');
 
 document.getElementById('btnLogout').addEventListener('click', async () => {
@@ -35,8 +51,18 @@ const logoPreview = document.getElementById('logoPreview');
 // Verifică dacă există logo deja
 fetch('/api/logo').then(r => {
     if (r.ok) {
-        logoPreview.innerHTML = `<img src="/api/logo?t=${Date.now()}" alt="Logo">`;
+        const v = localStorage.getItem('logo_v') || '1';
+        logoPreview.innerHTML = `<img src="/api/logo?v=${v}" alt="Logo Temporar">`;
         btnRemoveLogo.style.display = 'inline-flex';
+    } else {
+        // Caută logo standard dacă nu există unul temporar
+        fetch('/api/standard-logo').then(r2 => {
+            if (r2.ok) {
+                const v2 = localStorage.getItem('std_logo_v') || '1';
+                logoPreview.innerHTML = `<img src="/api/standard-logo?v=${v2}" alt="Logo Standard">`;
+                // Nu arătăm btnRemoveLogo pentru cel standard, acesta se gestionează din Profil
+            }
+        });
     }
 });
 
@@ -49,7 +75,9 @@ logoInput.addEventListener('change', async (e) => {
         const res = await fetch('/api/upload-logo', { method: 'POST', body: formData });
         const data = await res.json();
         if (res.ok) {
-            logoPreview.innerHTML = `<img src="${data.path}?t=${Date.now()}" alt="Logo">`;
+            const v = Date.now();
+            localStorage.setItem('logo_v', v);
+            logoPreview.innerHTML = `<img src="${data.path}?v=${v}" alt="Logo">`;
             btnRemoveLogo.style.display = 'inline-flex';
             showToast('Logo încărcat cu succes!');
             if (window.updatePreview) window.updatePreview();

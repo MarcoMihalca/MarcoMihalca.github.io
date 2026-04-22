@@ -17,7 +17,8 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) => {
         const userId = req.session.user.id;
         const ext = path.extname(file.originalname);
-        cb(null, `logo_${userId}${ext}`);
+        // file.fieldname poate fi 'logo', 'avatar', sau 'standard_logo'
+        cb(null, `${file.fieldname}_${userId}${ext}`);
     }
 });
 
@@ -35,53 +36,64 @@ const upload = multer({
     }
 });
 
-// Upload logo
-router.post('/upload-logo', requireAuth, upload.single('logo'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ message: 'Niciun fișier selectat.' });
-    }
-    res.json({ 
-        success: true, 
-        message: 'Logo încărcat!',
-        path: `/api/logo`
-    });
-});
-
-// Servire logo
-router.get('/logo', requireAuth, (req, res) => {
+// Helper pentru a găsi și servi/șterge un fișier după prefix
+function handleGetFile(req, res, prefix) {
     const userId = req.session.user.id;
     const extensions = ['.png', '.jpg', '.jpeg', '.svg'];
     
     for (const ext of extensions) {
-        const filePath = path.join(uploadsDir, `logo_${userId}${ext}`);
+        const filePath = path.join(uploadsDir, `${prefix}_${userId}${ext}`);
         if (fs.existsSync(filePath)) {
             return res.sendFile(filePath);
         }
     }
     
-    res.status(404).json({ message: 'Logo negăsit.' });
-});
+    res.status(404).json({ message: 'Fișier negăsit.' });
+}
 
-// Ștergere logo
-router.delete('/logo', requireAuth, (req, res) => {
+function handleDeleteFile(req, res, prefix) {
     const userId = req.session.user.id;
     const extensions = ['.png', '.jpg', '.jpeg', '.svg'];
     
     for (const ext of extensions) {
-        const filePath = path.join(uploadsDir, `logo_${userId}${ext}`);
+        const filePath = path.join(uploadsDir, `${prefix}_${userId}${ext}`);
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
         }
     }
     
     res.json({ success: true });
-});
+}
 
-// Cale logo pentru PDF (utilizare internă)
-router.getLogoPath = function(userId) {
+// --- RUTE LOGO TEMPORAR ---
+router.post('/upload-logo', requireAuth, upload.single('logo'), (req, res) => {
+    if (!req.file) return res.status(400).json({ message: 'Niciun fișier selectat.' });
+    res.json({ success: true, message: 'Logo temporar încărcat!', path: `/api/logo` });
+});
+router.get('/logo', requireAuth, (req, res) => handleGetFile(req, res, 'logo'));
+router.delete('/logo', requireAuth, (req, res) => handleDeleteFile(req, res, 'logo'));
+
+// --- RUTE LOGO STANDARD ---
+router.post('/upload-standard-logo', requireAuth, upload.single('standard_logo'), (req, res) => {
+    if (!req.file) return res.status(400).json({ message: 'Niciun fișier selectat.' });
+    res.json({ success: true, message: 'Logo standard încărcat!', path: `/api/standard-logo` });
+});
+router.get('/standard-logo', requireAuth, (req, res) => handleGetFile(req, res, 'standard_logo'));
+router.delete('/standard-logo', requireAuth, (req, res) => handleDeleteFile(req, res, 'standard_logo'));
+
+// --- RUTE AVATAR ---
+router.post('/upload-avatar', requireAuth, upload.single('avatar'), (req, res) => {
+    if (!req.file) return res.status(400).json({ message: 'Niciun fișier selectat.' });
+    res.json({ success: true, message: 'Avatar încărcat!', path: `/api/avatar` });
+});
+router.get('/avatar', requireAuth, (req, res) => handleGetFile(req, res, 'avatar'));
+router.delete('/avatar', requireAuth, (req, res) => handleDeleteFile(req, res, 'avatar'));
+
+// Cale fișier pentru PDF (utilizare internă)
+router.getFilePath = function(userId, prefix) {
     const extensions = ['.png', '.jpg', '.jpeg'];
     for (const ext of extensions) {
-        const filePath = path.join(uploadsDir, `logo_${userId}${ext}`);
+        const filePath = path.join(uploadsDir, `${prefix}_${userId}${ext}`);
         if (fs.existsSync(filePath)) {
             return filePath;
         }

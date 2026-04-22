@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/js/theme.js"></script>
     <link rel="stylesheet" href="/css/dashboard.css">
     <link rel="stylesheet" href="/css/history.css">
 </head>
@@ -26,10 +27,14 @@
             <a href="/history.html" class="nav-link active">📁 Istoric</a>
         </div>
         <div class="nav-user">
-            <div class="user-info">
+            <div class="theme-toggle-wrapper">
+                <button class="theme-toggle-btn" title="Schimbă tema"></button>
+                <div class="theme-tooltip">Vrei sa incerci aceeasi experienta pe care o iubesti, dar putin diferita? :)</div>
+            </div>
+            <a href="/profile.html" class="user-info" style="text-decoration: none;">
                 <div class="user-avatar">👤</div>
                 <span class="user-name" id="displayUser">—</span>
-            </div>
+            </a>
             <button class="btn-logout" id="btnLogout">Deconectare</button>
         </div>
     </nav>

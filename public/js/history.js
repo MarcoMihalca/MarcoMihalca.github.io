@@ -1,7 +1,23 @@
 // ============ AUTENTIFICARE ============
+// ============ AUTENTIFICARE ============
+const cachedUser = sessionStorage.getItem('facturio_user');
+if (cachedUser) document.getElementById('displayUser').textContent = cachedUser;
+
 fetch('/api/me')
     .then(r => { if (!r.ok) window.location.href = '/login.html'; return r.json(); })
-    .then(data => { if (data.username) document.getElementById('displayUser').textContent = data.username; })
+    .then(data => { 
+        if (data.username) {
+            sessionStorage.setItem('facturio_user', data.username);
+            document.getElementById('displayUser').textContent = data.username; 
+        }
+        fetch('/api/avatar').then(res => {
+            if (res.ok) {
+                const avatarEl = document.querySelector('.user-avatar');
+                const v = localStorage.getItem('avatar_v') || '1';
+                if (avatarEl) avatarEl.innerHTML = `<img src="/api/avatar?v=${v}" alt="Avatar">`;
+            }
+        });
+    })
     .catch(() => window.location.href = '/login.html');
 
 document.getElementById('btnLogout').addEventListener('click', async () => {
@@ -79,7 +95,7 @@ async function downloadPdf(id) {
         const pdfRes = await fetch('/generate-pdf', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
+            body: JSON.stringify({ ...data, fromHistory: true }),
         });
 
         const blob = await pdfRes.blob();
@@ -106,7 +122,7 @@ async function previewPdf(id) {
         const pdfRes = await fetch('/generate-pdf', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
+            body: JSON.stringify({ ...data, fromHistory: true }),
         });
 
         const blob = await pdfRes.blob();

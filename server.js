@@ -5,6 +5,8 @@ const path = require('path');
 
 // Inițializare bază de date (creează tabelele automat)
 require('./config/database');
+// Inițializare sistem automat de backup
+require('./config/backupConfig');
 
 const authRoutes = require('./routes/auth');
 const pdfRoutes = require('./routes/pdf');
@@ -32,6 +34,17 @@ app.use('/api', uploadRoutes);
 app.use('/api', emailRoutes);
 app.use('/api', efacturaRoutes);
 app.use('/', pdfRoutes);
+
+// --- Redirecționare pentru pagini protejate (evită "flash" content) ---
+app.use((req, res, next) => {
+    const protectedRoutes = ['/', '/index.html', '/history.html', '/profile.html'];
+    if (protectedRoutes.includes(req.path)) {
+        if (!req.session.user) {
+            return res.redirect('/login.html');
+        }
+    }
+    next();
+});
 
 // --- Fișiere statice ---
 app.use(express.static(path.join(__dirname, 'public')));

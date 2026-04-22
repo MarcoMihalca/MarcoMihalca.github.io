@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/js/theme.js"></script>
     <link rel="stylesheet" href="/css/dashboard.css">
     <link rel="stylesheet" href="/css/history.css">
 </head>
@@ -26,10 +27,14 @@
             <a href="/history.html" class="nav-link">📁 Istoric</a>
         </div>
         <div class="nav-user">
-            <div class="user-info">
+            <div class="theme-toggle-wrapper">
+                <button class="theme-toggle-btn" title="Schimbă tema"></button>
+                <div class="theme-tooltip">Vrei sa incerci aceeasi experienta pe care o iubesti, dar putin diferita? :)</div>
+            </div>
+            <a href="/profile.html" class="user-info" style="text-decoration: none;">
                 <div class="user-avatar">👤</div>
                 <span class="user-name" id="displayUser">—</span>
-            </div>
+            </a>
             <button class="btn-logout" id="btnLogout">Deconectare</button>
         </div>
     </nav>
@@ -105,13 +110,17 @@
                         </div>
                         <div class="logo-actions">
                             <p style="margin-bottom: 8px; font-size: 13px; color: #e2e8f0; font-weight: 500;">Logo-ul companiei tale?</p>
-                            <div style="display: flex; gap: 8px;">
+                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
                                 <label class="btn-upload" for="logoInput">
-                                    📤 Încarcă logo aici!
+                                    📤 Încarcă logo temporar
                                     <input type="file" id="logoInput" accept=".png,.jpg,.jpeg,.svg" hidden>
                                 </label>
-                                <button type="button" class="btn-remove-logo" id="btnRemoveLogo" style="display:none">✕ Șterge</button>
+                                <button type="button" class="btn-remove-logo" id="btnRemoveLogo" style="display:none">✕ Șterge temporar</button>
                             </div>
+                            <p style="font-size: 11px; color: rgba(148, 163, 184, 0.8);">
+                                Te-ai săturat să încarci același logo de fiecare dată? 
+                                <a href="/profile.html" style="color: #818cf8; text-decoration: underline;">Selectează un logo standard din pagina de profil!</a>
+                            </p>
                         </div>
                     </div>
 
